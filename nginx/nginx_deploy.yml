@@ -1,0 +1,81 @@
+---
+# Deployment for the nginx container in app server
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-app
+  namespace: am-test  
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx-app-container
+        image: nginx:alpine
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 7000
+        
+        resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+      tolerations:
+      - key: "app-worker"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+# Deployment for the nginx container in job server
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-job
+  namespace: am-test  
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx-job-container
+        image: nginx:alpine
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 7000
+        
+        resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+      tolerations:
+      - key: "job-worker"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"

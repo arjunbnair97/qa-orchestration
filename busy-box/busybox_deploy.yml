@@ -1,0 +1,40 @@
+---
+# Deployment for the busybox container in job server
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-job
+  namespace: am-test  
+  labels:
+    app: busybox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+      - name: busybox-job-container
+        image: busybox:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        
+        resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+      tolerations:
+      - key: "job-worker"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"

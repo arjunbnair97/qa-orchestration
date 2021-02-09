@@ -1,0 +1,40 @@
+---
+# Deployment for the go_lang container in job server
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-job
+  namespace: am-test  
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis-job-container
+        image: redis:rc-alpine
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6000
+        
+        resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+      tolerations:
+      - key: "job-worker"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
